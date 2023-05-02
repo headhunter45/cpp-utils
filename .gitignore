@@ -1,0 +1,7 @@
+.vscode/
+bazel-bazel-test
+bazel-bin
+bazel-out
+bazel-testlogs
+build/
+tmp/
