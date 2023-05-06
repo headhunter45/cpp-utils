@@ -20,3 +20,18 @@ cc_test(
     ],
 )
 
+cc_library(
+    name = "pretty_print",
+    srcs = ["pretty_print.cpp"],
+    hdrs = ["pretty_print.h"],
+    includes = ["pretty_print.h"],
+)
+
+cc_test(
+    name = "pretty_print_test",
+    srcs = ["pretty_print_test.cpp"],
+    deps = [
+        ":pretty_print",
+        "@tinytest",
+    ],
+)
