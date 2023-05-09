@@ -50,11 +50,11 @@ using TinyTest::make_test_suite;
 using TinyTest::TestResults;
 using namespace CPPUtils;
 using std::wstring;
-}  // End namespace
+} // End namespace
 
 TestResults test_EscapeForPrintingWithAConstCharPointer() {
   TestResults results;
-  auto escape_const_char_pointer = [](const char* value) -> string { return EscapeForPrinting(value); };
+  auto escape_const_char_pointer = [](const char *value) -> string { return EscapeForPrinting(value); };
   results += execute_suite(make_test_suite(
       "CPPUtils::EscapeForPrinting(const char*)",
       escape_const_char_pointer,
@@ -73,7 +73,7 @@ TestResults test_EscapeForPrintingWithAConstCharPointer() {
 
 TestResults test_EscapeForPrintingWithAString() {
   TestResults results;
-  auto escape_string = [](const string& value) -> string { return EscapeForPrinting(value); };
+  auto escape_string = [](const string &value) -> string { return EscapeForPrinting(value); };
   results += execute_suite(make_test_suite(
       "CPPUtils::EscapeForPrinting(const std::string&)",
       escape_string,
@@ -91,7 +91,7 @@ TestResults test_EscapeForPrintingWithAString() {
 }
 
 TestResults test_EscapeForPrintingWithAStringView() {
-  auto escape_string_view = [](const string_view& value) -> string { return EscapeForPrinting(value); };
+  auto escape_string_view = [](const string_view &value) -> string { return EscapeForPrinting(value); };
   return execute_suite(make_test_suite(
       "CPPUtils::EscapeForPrinting(const std::string_view&)",
       escape_string_view,
@@ -108,7 +108,7 @@ TestResults test_EscapeForPrintingWithAStringView() {
 }
 
 TestResults test_PrettyPrintWithAConstCharPointer() {
-  auto pretty_print = [](const char* value) -> string {
+  auto pretty_print = [](const char *value) -> string {
     ostringstream os;
     PrettyPrint(os, value);
     return os.str();
@@ -123,7 +123,7 @@ TestResults test_PrettyPrintWithAConstCharPointer() {
 }
 
 TestResults test_PrettyPrintWithAString() {
-  auto pretty_print = [](const string& value) -> string {
+  auto pretty_print = [](const string &value) -> string {
     ostringstream os;
     PrettyPrint(os, value);
     return os.str();
@@ -138,7 +138,7 @@ TestResults test_PrettyPrintWithAString() {
 }
 
 TestResults test_PrettyPrintWithAStringView() {
-  auto pretty_print = [](const std::string_view& value) -> string {
+  auto pretty_print = [](const std::string_view &value) -> string {
     ostringstream os;
     PrettyPrint(os, value);
     return os.str();
@@ -157,15 +157,15 @@ TestResults test_PrettyPrintWithATuple() {
   auto pretty_print = [](int i) -> string {
     ostringstream os;
     switch (i) {
-      case 1:
-        PrettyPrint(os, make_tuple(1, "hello", 9));
-        break;
-      case 2:
-        PrettyPrint(os, make_tuple());
-        break;
-      case 3:
-        PrettyPrint(os, make_tuple("one", "two", "three"));
-        break;
+    case 1:
+      PrettyPrint(os, make_tuple(1, "hello", 9));
+      break;
+    case 2:
+      PrettyPrint(os, make_tuple());
+      break;
+    case 3:
+      PrettyPrint(os, make_tuple("one", "two", "three"));
+      break;
     }
     return os.str();
   };
@@ -182,22 +182,23 @@ TestResults test_PrettyPrintWithATuple() {
 TestResults test_PrettyPrintWithAnInitializerList() {
   auto pretty_print = [](int i) {
     ostringstream os;
+    std::initializer_list<string> empty_initializer_list = {};
     switch (i) {
-      case 1:
-        PrettyPrint(os, {"one", "two", "three"});
-        break;
-      case 2:
-        PrettyPrint(os, (std::initializer_list<string>){});
-        break;
-      case 3:
-        PrettyPrint(os, {1, 2, 3});
-        break;
-      case 4:
-        PrettyPrint(os, {"one", "two", "three", "four"});
-        break;
-      case 5:
-        PrettyPrint(os, {1.1, 2.2, 3.3});
-        break;
+    case 1:
+      PrettyPrint(os, {"one", "two", "three"});
+      break;
+    case 2:
+      PrettyPrint(os, empty_initializer_list);
+      break;
+    case 3:
+      PrettyPrint(os, {1, 2, 3});
+      break;
+    case 4:
+      PrettyPrint(os, {"one", "two", "three", "four"});
+      break;
+    case 5:
+      PrettyPrint(os, {1.1, 2.2, 3.3});
+      break;
     }
     return os.str();
   };
@@ -221,32 +222,32 @@ TestResults test_PrettyPrintWithDifferentContainerTypes() {
   auto pretty_print = [](int i) {
     ostringstream os;
     switch (i) {
-      case 1: {
-        std::vector<int> v = {1, 2, 3};
-        PrettyPrint(os, v);
-        break;
-      }
-      case 2: {
-        std::queue<int> q;
-        q.push(1);
-        q.push(2);
-        q.push(3);
-        PrettyPrint(os, q);
-        break;
-      }
-      case 3: {
-        std::vector<string> v = {"one", "two", "three"};
-        PrettyPrint(os, v);
-        break;
-      }
-      case 4: {
-        std::queue<string> q;
-        q.push("one");
-        q.push("two");
-        q.push("three");
-        PrettyPrint(os, q);
-        break;
-      }
+    case 1: {
+      std::vector<int> v = {1, 2, 3};
+      PrettyPrint(os, v);
+      break;
+    }
+    case 2: {
+      std::queue<int> q;
+      q.push(1);
+      q.push(2);
+      q.push(3);
+      PrettyPrint(os, q);
+      break;
+    }
+    case 3: {
+      std::vector<string> v = {"one", "two", "three"};
+      PrettyPrint(os, v);
+      break;
+    }
+    case 4: {
+      std::queue<string> q;
+      q.push("one");
+      q.push("two");
+      q.push("three");
+      PrettyPrint(os, q);
+      break;
+    }
     }
     return os.str();
   };
@@ -288,7 +289,7 @@ TestResults test_PrettyPrintWithSimpleTypes() {
                                         make_test("should print 3.14 for a float", (string) "3.14", make_tuple(3.14f)),
                                     }));
 
-  auto pretty_print_string = [](const string& value) -> string {
+  auto pretty_print_string = [](const string &value) -> string {
     ostringstream os;
     PrettyPrint(os, value);
     return os.str();
@@ -307,15 +308,15 @@ TestResults test_PrettyPrintWithAPair() {
   auto pretty_print = [](int id) -> string {
     ostringstream os;
     switch (id) {
-      case 1:
-        PrettyPrint(os, std::make_pair(1, 2));
-        break;
-      case 2:
-        PrettyPrint(os, std::make_pair(3.14f, 42));
-        break;
-      case 3:
-        PrettyPrint(os, std::make_pair((string) "hello", (string) "world"));
-        break;
+    case 1:
+      PrettyPrint(os, std::make_pair(1, 2));
+      break;
+    case 2:
+      PrettyPrint(os, std::make_pair(3.14f, 42));
+      break;
+    case 3:
+      PrettyPrint(os, std::make_pair((string) "hello", (string) "world"));
+      break;
     }
     return os.str();
   };
@@ -332,18 +333,18 @@ TestResults test_PrettyPrintWithAPair() {
 }
 
 TestResults test_PrettyPrintWithSeparatorWithAConstCharPointer() {
-  auto pretty_print = [](const char* separator, int id) -> string {
+  auto pretty_print = [](const char *separator, int id) -> string {
     ostringstream os;
     switch (id) {
-      case 1:
-        PrettyPrintWithSeparator(os, separator, 1, 2, 3);
-        break;
-      case 2:
-        PrettyPrintWithSeparator(os, separator, 3.14f, 42, (string) "hello world");
-        break;
-      case 3:
-        PrettyPrintWithSeparator(os, separator, (string) "hello", (string) "world");
-        break;
+    case 1:
+      PrettyPrintWithSeparator(os, separator, 1, 2, 3);
+      break;
+    case 2:
+      PrettyPrintWithSeparator(os, separator, 3.14f, 42, (string) "hello world");
+      break;
+    case 3:
+      PrettyPrintWithSeparator(os, separator, (string) "hello", (string) "world");
+      break;
     }
     return os.str();
   };
@@ -362,18 +363,18 @@ TestResults test_PrettyPrintWithSeparatorWithAConstCharPointer() {
 }
 
 TestResults test_PrettyPrintWithSeparatorWithAString() {
-  auto pretty_print = [](const string& separator, int id) -> string {
+  auto pretty_print = [](const string &separator, int id) -> string {
     ostringstream os;
     switch (id) {
-      case 1:
-        PrettyPrintWithSeparator(os, separator, 1, 2, 3);
-        break;
-      case 2:
-        PrettyPrintWithSeparator(os, separator, 3.14f, 42, (string) "hello world");
-        break;
-      case 3:
-        PrettyPrintWithSeparator(os, separator, (string) "hello", (string) "world");
-        break;
+    case 1:
+      PrettyPrintWithSeparator(os, separator, 1, 2, 3);
+      break;
+    case 2:
+      PrettyPrintWithSeparator(os, separator, 3.14f, 42, (string) "hello world");
+      break;
+    case 3:
+      PrettyPrintWithSeparator(os, separator, (string) "hello", (string) "world");
+      break;
     }
     return os.str();
   };
@@ -392,18 +393,18 @@ TestResults test_PrettyPrintWithSeparatorWithAString() {
 }
 
 TestResults test_PrettyPrintWithSeparatorWithAStringView() {
-  auto pretty_print = [](const string_view& separator, int id) -> string {
+  auto pretty_print = [](const string_view &separator, int id) -> string {
     ostringstream os;
     switch (id) {
-      case 1:
-        PrettyPrintWithSeparator(os, separator, 1, 2, 3);
-        break;
-      case 2:
-        PrettyPrintWithSeparator(os, separator, 3.14f, 42, "hello world");
-        break;
-      case 3:
-        PrettyPrintWithSeparator(os, separator, "hello", "world");
-        break;
+    case 1:
+      PrettyPrintWithSeparator(os, separator, 1, 2, 3);
+      break;
+    case 2:
+      PrettyPrintWithSeparator(os, separator, 3.14f, 42, "hello world");
+      break;
+    case 3:
+      PrettyPrintWithSeparator(os, separator, "hello", "world");
+      break;
     }
     return os.str();
   };
@@ -422,7 +423,7 @@ TestResults test_PrettyPrintWithSeparatorWithAStringView() {
       }));
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   setlocale(LC_ALL, "");
   TestResults results;
 
