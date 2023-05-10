@@ -29,7 +29,7 @@
  *                                                                                                                    *
  **********************************************************************************************************************/
 #include "windows_logger.h"
-
+#ifdef _WIN32
 #include <iostream>
 #include <sstream>
 #include <tuple>
@@ -60,16 +60,26 @@ using TinyTest::TestResults;
 string no_errors = "no errors";
 typedef tuple<string, string, UINT> MessageBoxEvent;
 
+/// @brief
 class WindowsLoggerSpy : public WindowsLogger {
 public:
+  /// @brief
   mutable vector<MessageBoxEvent> log;
 
 protected:
+  /// @brief
+  /// @param body
+  /// @param title
+  /// @param u_type
   virtual void ShowMessageBox(const string &body, const string &title, UINT u_type) const override {
     log.push_back(make_tuple(body, title, u_type));
   }
 };
 
+/// @brief
+/// @param errors
+/// @param expected
+/// @param spy
 void ExpectLogSize(ostream &errors, size_t expected, const shared_ptr<WindowsLoggerSpy> &spy) {
   size_t actual = spy->log.size();
   if (actual != expected) {
@@ -77,6 +87,10 @@ void ExpectLogSize(ostream &errors, size_t expected, const shared_ptr<WindowsLog
   }
 }
 
+/// @brief
+/// @param errors
+/// @param expected
+/// @param event
 void ExpectMessage(ostream &errors, const string &expected, const MessageBoxEvent &event) {
   string actual = get<0>(event);
   if (actual != expected) {
@@ -84,6 +98,10 @@ void ExpectMessage(ostream &errors, const string &expected, const MessageBoxEven
   }
 }
 
+/// @brief
+/// @param errors
+/// @param expected
+/// @param event
 void ExpectTitle(ostream &errors, const string &expected, const MessageBoxEvent &event) {
   string actual = get<1>(event);
   if (actual != expected) {
@@ -91,6 +109,10 @@ void ExpectTitle(ostream &errors, const string &expected, const MessageBoxEvent 
   }
 }
 
+/// @brief
+/// @param parts
+/// @param separator
+/// @return
 string Join(vector<string> parts, const string &separator) {
   ostringstream os;
 
@@ -107,6 +129,10 @@ string Join(vector<string> parts, const string &separator) {
   return os.str();
 }
 
+/// @brief
+/// @param u_type
+/// @param ignore_defaults
+/// @return
 string ConvertUTypeToString(UINT u_type, bool ignore_defaults = true) {
   UINT u_button = u_type & MB_TYPEMASK;
   UINT u_icon = u_type & MB_ICONMASK;
@@ -234,6 +260,10 @@ string ConvertUTypeToString(UINT u_type, bool ignore_defaults = true) {
   return Join(parts, " | ");
 }
 
+/// @brief
+/// @param errors
+/// @param expected
+/// @param event
 void ExpectUType(ostream &errors, UINT expected, const MessageBoxEvent &event) {
   UINT actual = get<2>(event);
   if (actual != expected) {
@@ -242,6 +272,9 @@ void ExpectUType(ostream &errors, UINT expected, const MessageBoxEvent &event) {
   }
 }
 
+/// @brief
+/// @param error_messages
+/// @return
 string GetErrors(ostringstream &error_messages) {
   string errors = error_messages.str();
   if (errors.size() > 0) {
@@ -491,3 +524,4 @@ int main(int argc, char *argv[]) {
 
   return results.failed() + results.errors();
 }
+#endif // End defined(_WIN32)

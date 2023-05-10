@@ -38,7 +38,6 @@
 #include <cstdlib>
 #include <exception>
 #include <string>
-#endif
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -49,7 +48,6 @@
 #pragma comment(lib, "winmm.lib")
 
 namespace CPPUtils {
-#ifdef _WIN32
 namespace {
 using std::exception;
 using std::string;
@@ -131,9 +129,6 @@ string WindowsLogger::GetTitle(const MessageType &type) const {
     return kUnknownMessageTitle;
   }
 }
-#endif
 } // End namespace CPPUtils
 
-#ifdef WIN32
-namespace CPPUtils {}; // namespace CPPUtils
-#endif
+#endif // End defined(_WIN32)
