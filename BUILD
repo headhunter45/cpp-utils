@@ -46,7 +46,7 @@ cc_test(
     srcs = ["ansi_escapes_test.cpp"],
     deps = [
         ":ansi_escapes",
-        "@tinytest",
+        "@TinyTest//:tinytest",
     ],
 )
 
@@ -62,7 +62,7 @@ cc_test(
     srcs = ["console_logger_test.cpp"],
     deps = [
         ":console_logger",
-        "@tinytest",
+        "@TinyTest//:tinytest",
     ],
 )
 
@@ -77,7 +77,7 @@ cc_test(
     srcs = ["logger_test.cpp"],
     deps = [
         ":logger",
-        "@tinytest",
+        "@TinyTest//:tinytest",
     ],
 )
 
@@ -93,7 +93,7 @@ cc_test(
     srcs = ["pretty_print_test.cpp"],
     deps = [
         ":pretty_print",
-        "@tinytest",
+        "@TinyTest//:tinytest",
     ],
 )
 
@@ -111,6 +111,6 @@ cc_test(
     target_compatible_with = ["@platforms//os:windows"],
     deps = [
         ":windows_logger",
-        "@tinytest",
+        "@TinyTest//:tinytest",
     ],
 )

@@ -48,9 +48,8 @@ load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_
 hedron_compile_commands_setup()
 
 http_archive(
-    name = "tinytest",
-    # sha256 = "71f366e680606e18268e6b9673a65c44c9e672f7356a61ffbcd3502c6a8eea0b",
-    sha256 = "49a229ff3b2470e72743f2cc239cb2bc381f2976047a34b6832115097be7d887",
-    strip_prefix = "TinyTest-011953cd2ccecdc5fe0b8fe83b8d0dde10fa81ab",
-    urls = ["https://github.com/headhunter45/TinyTest/archive/011953cd2ccecdc5fe0b8fe83b8d0dde10fa81ab.zip"],
+    name = "TinyTest",
+    sha256 = "d6729abbec6ac167635be7463d8c37ca54b08e506e61553236b50c5ad30e8736",
+    strip_prefix = "TinyTest-a4109d2f494fd3fd3cc47069239fd3c79f728d5a",
+    urls = ["https://github.com/headhunter45/TinyTest/archive/a4109d2f494fd3fd3cc47069239fd3c79f728d5a.zip"],
 )
