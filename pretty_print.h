@@ -56,21 +56,50 @@ template <typename TChar> struct StringTraits;
 
 /// @brief This SFINAE struct is use to select a narrow string.
 template <> struct StringTraits<char> {
+  /// @brief Gets the narrow string.
+  /// @param narrow The narrow string. This is always returned by this specialization.
+  /// @param wide The wide string. This is ignored for this specialization.
+  /// @return The narrow string.
   static constexpr const char *Literal(const char *narrow, const wchar_t *wide) { return narrow; }
+
+  /// @brief Gets the narrow string.
+  /// @param narrow The narrow string. This is always returned by this specialization.
+  /// @param wide The wide string. This is ignored for this specialization.
+  /// @return The narrow string.
+  static const std::string Literal(const std::string &narrow, const std::wstring &wide) { return narrow; }
 };
 
 /// @brief This SFINAE struct is used to select a wide string.
 template <> struct StringTraits<wchar_t> {
+  /// @brief Gets the wide string.
+  /// @param narrow The narrow string. This ignored for this specialization.
+  /// @param wide The wide string. This is is always returned by this specialization.
+  /// @return The wide string.
   static constexpr const wchar_t *Literal(const char *narrow, const wchar_t *wide) { return wide; }
+
+  /// @brief Gets the wide string.
+  /// @param narrow The narrow string. This ignored for this specialization.
+  /// @param wide The wide string. This is is always returned by this specialization.
+  /// @return The wide string.
+  static const std::wstring Literal(const std::string &narrow, const std::wstring &wide) { return wide; }
 };
 
 /// @brief This SFINAE struct is used to help select container like types.
 /// @tparam T The potential container type.
 template <typename T> struct is_container {
+  /// @brief Returns true because the type has begin and end methods.
+  /// @tparam U The type to check.
+  /// @param <anonymous> A pointer that is not used.
+  /// @return True because the type is a container.
   template <typename U> static constexpr bool test(decltype(std::begin(std::declval<U>())) *) { return true; }
 
+  /// @brief Returns false because the type is not a container.
+  /// @tparam U The type to check.
+  /// @param <anonymous> A pointer that is not used.
+  /// @return False because the type is not a container.
   template <typename U> static constexpr bool test(...) { return false; }
 
+  /// @brief Tests whether type T is a container.
   static constexpr bool value = test<T>(nullptr);
 };
 

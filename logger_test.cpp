@@ -56,16 +56,16 @@ using std::shared_ptr;
 using std::string;
 using std::tuple;
 using std::vector;
-using TinyTest::execute_suite;
-using TinyTest::make_test;
-using TinyTest::make_test_suite;
+using TinyTest::ExecuteSuite;
+using TinyTest::MakeTest;
+using TinyTest::MakeTestSuite;
 using TinyTest::TestResults;
 
 string no_errors = "no errors";
 typedef tuple<Logger::MessageType, optional<string>, optional<string>> LogEntry;
 
 class SpyLoggerDestination : public Logger::Destination {
- public:
+public:
   SpyLoggerDestination() {
     min_type_ = Logger::MessageType::Unknown;
     max_type_ = Logger::MessageType::Wtf;
@@ -73,23 +73,22 @@ class SpyLoggerDestination : public Logger::Destination {
 
   virtual ~SpyLoggerDestination() {}
 
-  virtual void LogMessage(const Logger::MessageType& type, const std::string& message) const {
+  virtual void LogMessage(const Logger::MessageType &type, const std::string &message) const {
     log.push_back(make_tuple(type, message, nullopt));
   }
 
-  virtual void LogError(const Logger::MessageType& type, const std::exception& ex) const {
+  virtual void LogError(const Logger::MessageType &type, const std::exception &ex) const {
     log.push_back(make_tuple(type, nullopt, ex.what()));
   }
 
-  virtual void LogError(const Logger::MessageType& type, const std::string& message, const std::exception& ex) const {
+  virtual void LogError(const Logger::MessageType &type, const std::string &message, const std::exception &ex) const {
     log.push_back(make_tuple(type, message, ex.what()));
   }
 
   mutable vector<LogEntry> log;
 };
 
-template <typename T>
-ostream& PrintOptional(ostream& os, optional<T> op) {
+template <typename T> ostream &PrintOptional(ostream &os, optional<T> op) {
   if (op.has_value()) {
     os << op.value();
   } else {
@@ -98,14 +97,14 @@ ostream& PrintOptional(ostream& os, optional<T> op) {
   return os;
 }
 
-void ExpectMessageType(ostream& error_message, const Logger::MessageType& expected, const LogEntry& log_entry) {
+void ExpectMessageType(ostream &error_message, const Logger::MessageType &expected, const LogEntry &log_entry) {
   Logger::MessageType actual = get<0>(log_entry);
   if (actual != expected) {
     error_message << "Unexpected MessageType expected: " << expected << ", actual: " << actual << endl;
   }
 }
 
-void ExpectMessageText(ostream& error_message, optional<string> expected, const LogEntry& log_entry) {
+void ExpectMessageText(ostream &error_message, optional<string> expected, const LogEntry &log_entry) {
   optional<string> actual = get<1>(log_entry);
   if (actual != expected) {
     error_message << "Unexpected message text. Expected: ";
@@ -114,7 +113,7 @@ void ExpectMessageText(ostream& error_message, optional<string> expected, const 
   }
 }
 
-void ExpectMessageException(ostream& error_message, optional<string> expected, const LogEntry& log_entry) {
+void ExpectMessageException(ostream &error_message, optional<string> expected, const LogEntry &log_entry) {
   optional<string> actual = get<2>(log_entry);
   if (actual != expected) {
     error_message << "Unexpected message exception. Expected: ";
@@ -123,25 +122,25 @@ void ExpectMessageException(ostream& error_message, optional<string> expected, c
   }
 }
 
-void ExpectLogSize(ostream& error_message, size_t expected, shared_ptr<SpyLoggerDestination> destination) {
+void ExpectLogSize(ostream &error_message, size_t expected, shared_ptr<SpyLoggerDestination> destination) {
   size_t actual = destination->log.size();
   if (actual != expected) {
     error_message << "Unexpected number of events logged. Expected: " << expected << ", Actual: " << actual << endl;
   }
 }
 
-string GetError(ostringstream& error_message) {
+string GetError(ostringstream &error_message) {
   string error = error_message.str();
   if (error.size() > 0) {
     return error;
   }
   return no_errors;
 }
-}  // End namespace
+} // End namespace
 
 TestResults test_Destination_TypeRangeGettersAndSetters() {
   TestResults results;
-  auto set_min_type = [](const Logger::MessageType& type) {
+  auto set_min_type = [](const Logger::MessageType &type) {
     auto spy = make_shared<SpyLoggerDestination>();
     if (type == Logger::MessageType::Unknown) {
       spy->SetMinType(Logger::MessageType::Debug);
@@ -151,25 +150,25 @@ TestResults test_Destination_TypeRangeGettersAndSetters() {
     spy->SetMinType(type);
     return spy->GetMinType();
   };
-  results += execute_suite(make_test_suite(
+  results += ExecuteSuite(MakeTestSuite(
       "CPPUtils::Logger::SetMinType(const MessageType&)",
       set_min_type,
       {
-          make_test(
+          MakeTest(
               "should set min type to Unknown", Logger::MessageType::Unknown, make_tuple(Logger::MessageType::Unknown)),
-          make_test("should set min type to Debug", Logger::MessageType::Debug, make_tuple(Logger::MessageType::Debug)),
-          make_test(
+          MakeTest("should set min type to Debug", Logger::MessageType::Debug, make_tuple(Logger::MessageType::Debug)),
+          MakeTest(
               "should set min type to Verbose", Logger::MessageType::Verbose, make_tuple(Logger::MessageType::Verbose)),
-          make_test("should set min type to Info", Logger::MessageType::Info, make_tuple(Logger::MessageType::Info)),
-          make_test(
+          MakeTest("should set min type to Info", Logger::MessageType::Info, make_tuple(Logger::MessageType::Info)),
+          MakeTest(
               "should set min type to Warning", Logger::MessageType::Warning, make_tuple(Logger::MessageType::Warning)),
-          make_test("should set min type to Error", Logger::MessageType::Error, make_tuple(Logger::MessageType::Error)),
-          make_test("should set min type to Wtf", Logger::MessageType::Wtf, make_tuple(Logger::MessageType::Wtf)),
-          make_test("should set min type to Unknown for an invalid MessageType",
-                    Logger::MessageType::Unknown,
-                    (make_tuple((Logger::MessageType)-1))),
+          MakeTest("should set min type to Error", Logger::MessageType::Error, make_tuple(Logger::MessageType::Error)),
+          MakeTest("should set min type to Wtf", Logger::MessageType::Wtf, make_tuple(Logger::MessageType::Wtf)),
+          MakeTest("should set min type to Unknown for an invalid MessageType",
+                   Logger::MessageType::Unknown,
+                   (make_tuple((Logger::MessageType)-1))),
       }));
-  auto set_max_type = [](const Logger::MessageType& type) {
+  auto set_max_type = [](const Logger::MessageType &type) {
     auto spy = make_shared<SpyLoggerDestination>();
     if (type == Logger::MessageType::Unknown) {
       spy->SetMaxType(Logger::MessageType::Debug);
@@ -179,23 +178,23 @@ TestResults test_Destination_TypeRangeGettersAndSetters() {
     spy->SetMaxType(type);
     return spy->GetMaxType();
   };
-  results += execute_suite(make_test_suite(
+  results += ExecuteSuite(MakeTestSuite(
       "CPPUtils::Logger::SetMaxType(const MessageType&)",
       set_max_type,
       {
-          make_test(
+          MakeTest(
               "should set max type to Unknown", Logger::MessageType::Unknown, make_tuple(Logger::MessageType::Unknown)),
-          make_test("should set max type to Debug", Logger::MessageType::Debug, make_tuple(Logger::MessageType::Debug)),
-          make_test(
+          MakeTest("should set max type to Debug", Logger::MessageType::Debug, make_tuple(Logger::MessageType::Debug)),
+          MakeTest(
               "should set max type to Verbose", Logger::MessageType::Verbose, make_tuple(Logger::MessageType::Verbose)),
-          make_test("should set max type to Info", Logger::MessageType::Info, make_tuple(Logger::MessageType::Info)),
-          make_test(
+          MakeTest("should set max type to Info", Logger::MessageType::Info, make_tuple(Logger::MessageType::Info)),
+          MakeTest(
               "should set max type to Warning", Logger::MessageType::Warning, make_tuple(Logger::MessageType::Warning)),
-          make_test("should set max type to Error", Logger::MessageType::Error, make_tuple(Logger::MessageType::Error)),
-          make_test("should set max type to Wtf", Logger::MessageType::Wtf, make_tuple(Logger::MessageType::Wtf)),
-          make_test("should set max type to Unknown for an invalid MessageType",
-                    Logger::MessageType::Unknown,
-                    (make_tuple((Logger::MessageType)-1))),
+          MakeTest("should set max type to Error", Logger::MessageType::Error, make_tuple(Logger::MessageType::Error)),
+          MakeTest("should set max type to Wtf", Logger::MessageType::Wtf, make_tuple(Logger::MessageType::Wtf)),
+          MakeTest("should set max type to Unknown for an invalid MessageType",
+                   Logger::MessageType::Unknown,
+                   (make_tuple((Logger::MessageType)-1))),
       }));
   return results;
 }
@@ -206,11 +205,11 @@ TestResults test_Logger_GetShared() {
     auto second = Logger::GetShared();
     return first == second;
   };
-  return execute_suite(make_test_suite("CPPUtils::Logger::GetShared()",
-                                       function_to_test,
-                                       {
-                                           make_test("should get the same instance twice", true, make_tuple()),
-                                       }));
+  return ExecuteSuite(MakeTestSuite("CPPUtils::Logger::GetShared()",
+                                    function_to_test,
+                                    {
+                                        MakeTest("should get the same instance twice", true, make_tuple()),
+                                    }));
 }
 
 TestResults test_Logger_GetUnique() {
@@ -228,18 +227,18 @@ TestResults test_Logger_GetUnique() {
 
   TestResults results;
 
-  results += execute_suite(make_test_suite("CPPUtils::Logger::GetUnique()",
-                                           get_unique_is_different,
-                                           {
-                                               make_test("should get two different instances", true, make_tuple()),
-                                           }));
+  results += ExecuteSuite(MakeTestSuite("CPPUtils::Logger::GetUnique()",
+                                        get_unique_is_different,
+                                        {
+                                            MakeTest("should get two different instances", true, make_tuple()),
+                                        }));
 
-  results += execute_suite(
-      make_test_suite("CPPUtils::Logger::GetUnique()",
-                      get_unique_is_not_get_shared,
-                      {
-                          make_test("should get and instance that is not the shared instance", true, make_tuple()),
-                      }));
+  results += ExecuteSuite(
+      MakeTestSuite("CPPUtils::Logger::GetUnique()",
+                    get_unique_is_not_get_shared,
+                    {
+                        MakeTest("should get and instance that is not the shared instance", true, make_tuple()),
+                    }));
 
   return results;
 }
@@ -274,11 +273,11 @@ TestResults test_LogUnimplementedMethod() {
     }
     return GetError(error_message);
   };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::Logger::LogUnimplementedMethod",
       function_to_test,
       {
-          make_test("should log a debug message", no_errors, make_tuple("int main(int argc, char* argv[])")),
+          MakeTest("should log a debug message", no_errors, make_tuple("int main(int argc, char* argv[])")),
       }));
 #endif
 }
@@ -300,11 +299,11 @@ TestResults test_Logger_LogUnhandledError() {
     }
     return GetError(error_message);
   };
-  return execute_suite(make_test_suite("CPPUtils::Logger::LogUnhandledError(const std::exception&)",
-                                       log_unhandled_error,
-                                       {
-                                           make_test("should log an error", no_errors, make_tuple()),
-                                       }));
+  return ExecuteSuite(MakeTestSuite("CPPUtils::Logger::LogUnhandledError(const std::exception&)",
+                                    log_unhandled_error,
+                                    {
+                                        MakeTest("should log an error", no_errors, make_tuple()),
+                                    }));
 }
 
 TestResults test_Logger_LogUnimplementedFeature() {
@@ -324,102 +323,102 @@ TestResults test_Logger_LogUnimplementedFeature() {
     }
     return GetError(error_message);
   };
-  return execute_suite(make_test_suite("CPPUtils::Logger::LogUnimplementedFeature()",
-                                       log_unimplemented_feature,
-                                       {
-                                           make_test("should log an unimplemented feature", no_errors, make_tuple()),
-                                       }));
+  return ExecuteSuite(MakeTestSuite("CPPUtils::Logger::LogUnimplementedFeature()",
+                                    log_unimplemented_feature,
+                                    {
+                                        MakeTest("should log an unimplemented feature", no_errors, make_tuple()),
+                                    }));
 }
 
 TestResults test_Logger_Log_Level() {
-  auto log = [](const Logger::MessageType& type,
-                const optional<string>& message_text,
-                const optional<std::exception>& ex) -> string {
+  auto log = [](const Logger::MessageType &type,
+                const optional<string> &message_text,
+                const optional<std::exception> &ex) -> string {
     ostringstream error_message;
     auto logger = Logger::GetUnique();
     auto spy = make_shared<SpyLoggerDestination>();
     logger->AddDestination(spy);
     switch (type) {
-      case Logger::MessageType::Debug:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->LogDebug(message_text.value(), ex.value());
-          } else {
-            logger->LogDebug(message_text.value());
-          }
+    case Logger::MessageType::Debug:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->LogDebug(message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->LogDebug(ex.value());
-          }
+          logger->LogDebug(message_text.value());
         }
-        break;
-      case Logger::MessageType::Verbose:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->LogVerbose(message_text.value(), ex.value());
-          } else {
-            logger->LogVerbose(message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->LogDebug(ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Verbose:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->LogVerbose(message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->LogVerbose(ex.value());
-          }
+          logger->LogVerbose(message_text.value());
         }
-        break;
-      case Logger::MessageType::Info:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->LogInfo(message_text.value(), ex.value());
-          } else {
-            logger->LogInfo(message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->LogVerbose(ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Info:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->LogInfo(message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->LogInfo(ex.value());
-          }
+          logger->LogInfo(message_text.value());
         }
-        break;
-      case Logger::MessageType::Warning:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->LogWarning(message_text.value(), ex.value());
-          } else {
-            logger->LogWarning(message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->LogInfo(ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Warning:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->LogWarning(message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->LogWarning(ex.value());
-          }
+          logger->LogWarning(message_text.value());
         }
-        break;
-      case Logger::MessageType::Error:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->LogError(message_text.value(), ex.value());
-          } else {
-            logger->LogError(message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->LogWarning(ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Error:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->LogError(message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->LogError(ex.value());
-          }
+          logger->LogError(message_text.value());
         }
-        break;
-      case Logger::MessageType::Wtf:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->LogWtf(message_text.value(), ex.value());
-          } else {
-            logger->LogWtf(message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->LogError(ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Wtf:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->LogWtf(message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->LogWtf(ex.value());
-          }
+          logger->LogWtf(message_text.value());
         }
-        break;
-      default:
-        break;
+      } else {
+        if (ex.has_value()) {
+          logger->LogWtf(ex.value());
+        }
+      }
+      break;
+    default:
+      break;
     }
     ExpectLogSize(error_message, 1, spy);
     if (spy->log.size() > 0) {
@@ -430,193 +429,193 @@ TestResults test_Logger_Log_Level() {
     }
     return GetError(error_message);
   };
-  return execute_suite(
-      make_test_suite("CPPUtils::Logger::Log*(...)",
-                      log,
-                      {
-                          make_test("should log what a terrible failure with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Wtf,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log what a terrible failure with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Wtf,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log what a terrible failure with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Wtf,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log an error with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Error,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log an error with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Error,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log an error with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Error,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a warning with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Warning,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log a warning with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Warning,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a warning with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Warning,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log an info with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Info,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log an info with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Info,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log an info with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Info,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a debug with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Debug,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log a debug with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Debug,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a debug with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Debug,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a verbose with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Verbose,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log a verbose with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Verbose,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a verbose with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Verbose,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
+  return ExecuteSuite(
+      MakeTestSuite("CPPUtils::Logger::Log*(...)",
+                    log,
+                    {
+                        MakeTest("should log what a terrible failure with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Wtf,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log what a terrible failure with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Wtf,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log what a terrible failure with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Wtf,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log an error with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Error,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log an error with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Error,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log an error with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Error,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a warning with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Warning,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log a warning with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Warning,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a warning with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Warning,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log an info with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Info,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log an info with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Info,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log an info with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Info,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a debug with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Debug,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log a debug with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Debug,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a debug with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Debug,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a verbose with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Verbose,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log a verbose with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Verbose,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a verbose with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Verbose,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
 
-                      }));
+                    }));
 }
 
 TestResults test_Logger_Log() {
-  auto log = [](const Logger::MessageType& type,
-                const optional<string>& message_text,
-                const optional<std::exception>& ex) -> string {
+  auto log = [](const Logger::MessageType &type,
+                const optional<string> &message_text,
+                const optional<std::exception> &ex) -> string {
     ostringstream error_message;
     auto logger = Logger::GetUnique();
     auto spy = make_shared<SpyLoggerDestination>();
     logger->AddDestination(spy);
     switch (type) {
-      case Logger::MessageType::Debug:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Debug, message_text.value(), ex.value());
-          } else {
-            logger->Log(Logger::MessageType::Debug, message_text.value());
-          }
+    case Logger::MessageType::Debug:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Debug, message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Debug, ex.value());
-          }
+          logger->Log(Logger::MessageType::Debug, message_text.value());
         }
-        break;
-      case Logger::MessageType::Verbose:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Verbose, message_text.value(), ex.value());
-          } else {
-            logger->Log(Logger::MessageType::Verbose, message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Debug, ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Verbose:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Verbose, message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Verbose, ex.value());
-          }
+          logger->Log(Logger::MessageType::Verbose, message_text.value());
         }
-        break;
-      case Logger::MessageType::Info:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Info, message_text.value(), ex.value());
-          } else {
-            logger->Log(Logger::MessageType::Info, message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Verbose, ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Info:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Info, message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Info, ex.value());
-          }
+          logger->Log(Logger::MessageType::Info, message_text.value());
         }
-        break;
-      case Logger::MessageType::Warning:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Warning, message_text.value(), ex.value());
-          } else {
-            logger->Log(Logger::MessageType::Warning, message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Info, ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Warning:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Warning, message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Warning, ex.value());
-          }
+          logger->Log(Logger::MessageType::Warning, message_text.value());
         }
-        break;
-      case Logger::MessageType::Error:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Error, message_text.value(), ex.value());
-          } else {
-            logger->Log(Logger::MessageType::Error, message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Warning, ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Error:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Error, message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Error, ex.value());
-          }
+          logger->Log(Logger::MessageType::Error, message_text.value());
         }
-        break;
-      case Logger::MessageType::Wtf:
-        if (message_text.has_value()) {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Wtf, message_text.value(), ex.value());
-          } else {
-            logger->Log(Logger::MessageType::Wtf, message_text.value());
-          }
+      } else {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Error, ex.value());
+        }
+      }
+      break;
+    case Logger::MessageType::Wtf:
+      if (message_text.has_value()) {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Wtf, message_text.value(), ex.value());
         } else {
-          if (ex.has_value()) {
-            logger->Log(Logger::MessageType::Wtf, ex.value());
-          }
+          logger->Log(Logger::MessageType::Wtf, message_text.value());
         }
-        break;
-      default:
-        break;
+      } else {
+        if (ex.has_value()) {
+          logger->Log(Logger::MessageType::Wtf, ex.value());
+        }
+      }
+      break;
+    default:
+      break;
     }
     ExpectLogSize(error_message, 1, spy);
     if (spy->log.size() > 0) {
@@ -627,106 +626,106 @@ TestResults test_Logger_Log() {
     }
     return GetError(error_message);
   };
-  return execute_suite(
-      make_test_suite("CPPUtils::Logger::Log(const MessageType&, ...)",
-                      log,
-                      {
-                          make_test("should log what a terrible failure with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Wtf,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log what a terrible failure with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Wtf,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log what a terrible failure with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Wtf,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log an error with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Error,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log an error with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Error,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log an error with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Error,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a warning with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Warning,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log a warning with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Warning,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a warning with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Warning,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log an info with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Info,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log an info with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Info,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log an info with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Info,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a debug with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Debug,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log a debug with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Debug,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a debug with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Debug,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a verbose with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Verbose,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)nullopt)),
-                          make_test("should log a verbose with a message and an exception",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Verbose,
-                                               (const optional<string>&)"this should never happen",
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
-                          make_test("should log a verbose with a message",
-                                    no_errors,
-                                    make_tuple(Logger::MessageType::Verbose,
-                                               (const optional<string>&)nullopt,
-                                               (const optional<std::exception>&)runtime_error("bad thing happen"))),
+  return ExecuteSuite(
+      MakeTestSuite("CPPUtils::Logger::Log(const MessageType&, ...)",
+                    log,
+                    {
+                        MakeTest("should log what a terrible failure with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Wtf,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log what a terrible failure with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Wtf,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log what a terrible failure with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Wtf,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log an error with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Error,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log an error with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Error,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log an error with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Error,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a warning with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Warning,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log a warning with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Warning,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a warning with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Warning,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log an info with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Info,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log an info with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Info,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log an info with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Info,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a debug with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Debug,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log a debug with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Debug,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a debug with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Debug,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a verbose with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Verbose,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)nullopt)),
+                        MakeTest("should log a verbose with a message and an exception",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Verbose,
+                                            (const optional<string> &)"this should never happen",
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
+                        MakeTest("should log a verbose with a message",
+                                 no_errors,
+                                 make_tuple(Logger::MessageType::Verbose,
+                                            (const optional<string> &)nullopt,
+                                            (const optional<std::exception> &)runtime_error("bad thing happen"))),
 
-                      }));
+                    }));
 }
 
 TestResults test_Logger_LogToDo() {
-  auto log_to_do = [](const string& todo_message) {
+  auto log_to_do = [](const string &todo_message) {
     auto logger = Logger::GetUnique();
     auto spy = make_shared<SpyLoggerDestination>();
     logger->AddDestination(spy);
@@ -741,15 +740,15 @@ TestResults test_Logger_LogToDo() {
     }
     return GetError(error_message);
   };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::Logger::LogToDo(const std:;string&)",
       log_to_do,
       {
-          make_test("should log a TODO for \"fill in this function\"", no_errors, make_tuple("fill in this function")),
-          make_test("should log a TODO for \"delete this after fixing bug:2048\"",
-                    no_errors,
-                    make_tuple("delete this after fixing bug:2048")),
-          make_test("should log a TODO for \"refactor this\"", no_errors, make_tuple("refactor this")),
+          MakeTest("should log a TODO for \"fill in this function\"", no_errors, make_tuple("fill in this function")),
+          MakeTest("should log a TODO for \"delete this after fixing bug:2048\"",
+                   no_errors,
+                   make_tuple("delete this after fixing bug:2048")),
+          MakeTest("should log a TODO for \"refactor this\"", no_errors, make_tuple("refactor this")),
       }));
 }
 
@@ -777,17 +776,17 @@ TestResults test_Logger_AddDestination_and_ClearDestinations() {
     }
     return GetError(error_message);
   };
-  return execute_suite(make_test_suite("",
-                                       add_destination,
-                                       {
-                                           make_test("should add and clear destinations", no_errors, make_tuple()),
-                                       }));
+  return ExecuteSuite(MakeTestSuite("",
+                                    add_destination,
+                                    {
+                                        MakeTest("should add and clear destinations", no_errors, make_tuple()),
+                                    }));
 }
 
 // AddDestination
 // ClearDestinations
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   TestResults results;
 
   results += test_Destination_TypeRangeGettersAndSetters();
@@ -803,5 +802,5 @@ int main(int argc, char* argv[]) {
 
   PrintResults(cout, results);
 
-  return results.failed() + results.errors();
+  return results.Failed() + results.Errors();
 }

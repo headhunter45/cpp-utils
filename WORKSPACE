@@ -8,6 +8,8 @@
 #                                                                                                                      #
 # Licensed under the MIT license. See below for details.                                                               #
 #                                                                                                                      #
+########################################################################################################################
+#                                                                                                                      #
 #  MIT License                                                                                                         #
 #                                                                                                                      #
 # Copyright (c) 2023 Tom Hicks <headhunter3@gmail.com>                                                                 #
@@ -26,6 +28,8 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.     #
 #                                                                                                                      #
 ########################################################################################################################
+workspace(name = "CPPUtils")
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # Hedron's Compile Commands Extractor for Bazel
@@ -45,7 +49,8 @@ hedron_compile_commands_setup()
 
 http_archive(
     name = "tinytest",
-    sha256 = "71f366e680606e18268e6b9673a65c44c9e672f7356a61ffbcd3502c6a8eea0b",
-    strip_prefix = "TinyTest-460c9492d927689b9db7f28d8742705dc0bbee62",
-    urls = ["https://github.com/headhunter45/TinyTest/archive/460c9492d927689b9db7f28d8742705dc0bbee62.zip"],
+    # sha256 = "71f366e680606e18268e6b9673a65c44c9e672f7356a61ffbcd3502c6a8eea0b",
+    sha256 = "49a229ff3b2470e72743f2cc239cb2bc381f2976047a34b6832115097be7d887",
+    strip_prefix = "TinyTest-011953cd2ccecdc5fe0b8fe83b8d0dde10fa81ab",
+    urls = ["https://github.com/headhunter45/TinyTest/archive/011953cd2ccecdc5fe0b8fe83b8d0dde10fa81ab.zip"],
 )

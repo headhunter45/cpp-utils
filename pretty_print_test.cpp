@@ -44,9 +44,9 @@ using std::make_tuple;
 using std::ostringstream;
 using std::string;
 using std::string_view;
-using TinyTest::execute_suite;
-using TinyTest::make_test;
-using TinyTest::make_test_suite;
+using TinyTest::ExecuteSuite;
+using TinyTest::MakeTest;
+using TinyTest::MakeTestSuite;
 using TinyTest::TestResults;
 using namespace CPPUtils;
 using std::wstring;
@@ -55,55 +55,55 @@ using std::wstring;
 TestResults test_EscapeForPrintingWithAConstCharPointer() {
   TestResults results;
   auto escape_const_char_pointer = [](const char *value) -> string { return EscapeForPrinting(value); };
-  results += execute_suite(make_test_suite(
-      "CPPUtils::EscapeForPrinting(const char*)",
-      escape_const_char_pointer,
-      {
-          make_test("should escape an empty string", (string) "", make_tuple("")),
-          make_test("should esacpe a string with no special characters",
-                    (string) "This is a normal string.",
-                    make_tuple("This is a normal string.")),
-          make_test("should escape the escape character by itself", (string) "\\033", make_tuple("\033")),
-          make_test("should escape the escape character within a string",
-                    (string) "This string has an \\033 in it.",
-                    make_tuple("This string has an \033 in it.")),
-      }));
+  results += ExecuteSuite(
+      MakeTestSuite("CPPUtils::EscapeForPrinting(const char*)",
+                    escape_const_char_pointer,
+                    {
+                        MakeTest("should escape an empty string", (string) "", make_tuple("")),
+                        MakeTest("should esacpe a string with no special characters",
+                                 (string) "This is a normal string.",
+                                 make_tuple("This is a normal string.")),
+                        MakeTest("should escape the escape character by itself", (string) "\\033", make_tuple("\033")),
+                        MakeTest("should escape the escape character within a string",
+                                 (string) "This string has an \\033 in it.",
+                                 make_tuple("This string has an \033 in it.")),
+                    }));
   return results;
 }
 
 TestResults test_EscapeForPrintingWithAString() {
   TestResults results;
   auto escape_string = [](const string &value) -> string { return EscapeForPrinting(value); };
-  results += execute_suite(make_test_suite(
+  results += ExecuteSuite(MakeTestSuite(
       "CPPUtils::EscapeForPrinting(const std::string&)",
       escape_string,
       {
-          make_test("should escape an empty string", (string) "", make_tuple((string) "")),
-          make_test("should escape a string with no special characters",
-                    (string) "This is a normal string.",
-                    make_tuple((string) "This is a normal string.")),
-          make_test("should escape the escape character by itself", (string) "\\033", make_tuple((string) "\033")),
-          make_test("should escape the escape character within a string",
-                    (string) "This string has an \\033 in it.",
-                    make_tuple((string) "This string has an \033 in it.")),
+          MakeTest("should escape an empty string", (string) "", make_tuple((string) "")),
+          MakeTest("should escape a string with no special characters",
+                   (string) "This is a normal string.",
+                   make_tuple((string) "This is a normal string.")),
+          MakeTest("should escape the escape character by itself", (string) "\\033", make_tuple((string) "\033")),
+          MakeTest("should escape the escape character within a string",
+                   (string) "This string has an \\033 in it.",
+                   make_tuple((string) "This string has an \033 in it.")),
       }));
   return results;
 }
 
 TestResults test_EscapeForPrintingWithAStringView() {
   auto escape_string_view = [](const string_view &value) -> string { return EscapeForPrinting(value); };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::EscapeForPrinting(const std::string_view&)",
       escape_string_view,
       {
-          make_test("should escape an empty string", (string) "", make_tuple((string_view) "")),
-          make_test("should escape a string with no special characters",
-                    (string) "This is a normal string.",
-                    make_tuple((string_view) "This is a normal string.")),
-          make_test("should escape the escape character by itself", (string) "\\033", make_tuple((string_view) "\033")),
-          make_test("should escape the escape character within a string",
-                    (string) "This string has an \\033 in it.",
-                    make_tuple((string_view) "This string has an \033 in it.")),
+          MakeTest("should escape an empty string", (string) "", make_tuple((string_view) "")),
+          MakeTest("should escape a string with no special characters",
+                   (string) "This is a normal string.",
+                   make_tuple((string_view) "This is a normal string.")),
+          MakeTest("should escape the escape character by itself", (string) "\\033", make_tuple((string_view) "\033")),
+          MakeTest("should escape the escape character within a string",
+                   (string) "This string has an \\033 in it.",
+                   make_tuple((string_view) "This string has an \033 in it.")),
       }));
 }
 
@@ -113,13 +113,13 @@ TestResults test_PrettyPrintWithAConstCharPointer() {
     PrettyPrint(os, value);
     return os.str();
   };
-  return execute_suite(make_test_suite(
-      "CPPUtils::PrettyPrint(std::ostream&, const char*)",
-      pretty_print,
-      {
-          make_test("should print \"\" for an empty string", (string) "\"\"", make_tuple("")),
-          make_test("should print \"hello world\"", (string) "\"hello world\"", make_tuple("hello world")),
-      }));
+  return ExecuteSuite(
+      MakeTestSuite("CPPUtils::PrettyPrint(std::ostream&, const char*)",
+                    pretty_print,
+                    {
+                        MakeTest("should print \"\" for an empty string", (string) "\"\"", make_tuple("")),
+                        MakeTest("should print \"hello world\"", (string) "\"hello world\"", make_tuple("hello world")),
+                    }));
 }
 
 TestResults test_PrettyPrintWithAString() {
@@ -128,12 +128,12 @@ TestResults test_PrettyPrintWithAString() {
     PrettyPrint(os, value);
     return os.str();
   };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::PrettyPrint(std::ostream&, const std::string&)",
       pretty_print,
       {
-          make_test("should print \"\" for an empty string", (string) "\"\"", make_tuple((string) "")),
-          make_test("should print \"hello world\"", (string) "\"hello world\"", make_tuple((string) "hello world")),
+          MakeTest("should print \"\" for an empty string", (string) "\"\"", make_tuple((string) "")),
+          MakeTest("should print \"hello world\"", (string) "\"hello world\"", make_tuple((string) "hello world")),
       }));
 }
 
@@ -143,13 +143,12 @@ TestResults test_PrettyPrintWithAStringView() {
     PrettyPrint(os, value);
     return os.str();
   };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::PrettyPrint(std::ostream&, const std::string_view&)",
       pretty_print,
       {
-          make_test("should print \"\" for an empty string", (string) "\"\"", make_tuple((string_view) "")),
-          make_test(
-              "should print \"hello world\"", (string) "\"hello world\"", make_tuple((string_view) "hello world")),
+          MakeTest("should print \"\" for an empty string", (string) "\"\"", make_tuple((string_view) "")),
+          MakeTest("should print \"hello world\"", (string) "\"hello world\"", make_tuple((string_view) "hello world")),
       }));
 }
 
@@ -169,13 +168,13 @@ TestResults test_PrettyPrintWithATuple() {
     }
     return os.str();
   };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::PrettyPrint(std::ostream&, std::tuple)",
       pretty_print,
       {
-          make_test("should print a tuple of mixed types", (string) "[ 1, \"hello\", 9 ]", make_tuple(1)),
-          make_test("should print an empty tuple", (string) "[]", make_tuple(2)),
-          make_test("should print a tuple of strings", (string) "[ \"one\", \"two\", \"three\" ]", make_tuple(3)),
+          MakeTest("should print a tuple of mixed types", (string) "[ 1, \"hello\", 9 ]", make_tuple(1)),
+          MakeTest("should print an empty tuple", (string) "[]", make_tuple(2)),
+          MakeTest("should print a tuple of strings", (string) "[ \"one\", \"two\", \"three\" ]", make_tuple(3)),
       }));
 }
 
@@ -203,18 +202,18 @@ TestResults test_PrettyPrintWithAnInitializerList() {
     return os.str();
   };
 
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::PrettyPrint(std::ostream&, std::initializer_list)",
       pretty_print,
       {
-          make_test(
+          MakeTest(
               "should print an initializer_list of strings", (string) "[ \"one\", \"two\", \"three\" ]", make_tuple(1)),
-          make_test("should print an empty initializer_list", (string) "[]", make_tuple(2)),
-          make_test("should print an initializer_list of integers", (string) "[ 1, 2, 3 ]", make_tuple(3)),
-          make_test("should print an initializer_list of strings with four elements",
-                    (string) "[ \"one\", \"two\", \"three\", \"four\" ]",
-                    make_tuple(4)),
-          make_test("should print an initializer_list of doubles", (string) "[ 1.1, 2.2, 3.3 ]", make_tuple(5)),
+          MakeTest("should print an empty initializer_list", (string) "[]", make_tuple(2)),
+          MakeTest("should print an initializer_list of integers", (string) "[ 1, 2, 3 ]", make_tuple(3)),
+          MakeTest("should print an initializer_list of strings with four elements",
+                   (string) "[ \"one\", \"two\", \"three\", \"four\" ]",
+                   make_tuple(4)),
+          MakeTest("should print an initializer_list of doubles", (string) "[ 1.1, 2.2, 3.3 ]", make_tuple(5)),
       }));
 }
 
@@ -252,14 +251,14 @@ TestResults test_PrettyPrintWithDifferentContainerTypes() {
     return os.str();
   };
 
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::PrettyPrint(std::ostream&, TContainer)",
       pretty_print,
       {
-          make_test("should print a vector of integers", (string) "[ 1, 2, 3 ]", make_tuple(1)),
-          make_test("should print a queue of integers", (string) "[ 1, 2, 3 ]", make_tuple(2)),
-          make_test("should print a vector of strings", (string) "[ \"one\", \"two\", \"three\" ]", make_tuple(3)),
-          make_test("should print a queue of strings", (string) "[ \"one\", \"two\", \"three\" ]", make_tuple(4)),
+          MakeTest("should print a vector of integers", (string) "[ 1, 2, 3 ]", make_tuple(1)),
+          MakeTest("should print a queue of integers", (string) "[ 1, 2, 3 ]", make_tuple(2)),
+          MakeTest("should print a vector of strings", (string) "[ \"one\", \"two\", \"three\" ]", make_tuple(3)),
+          MakeTest("should print a queue of strings", (string) "[ \"one\", \"two\", \"three\" ]", make_tuple(4)),
       }));
 }
 
@@ -271,11 +270,11 @@ TestResults test_PrettyPrintWithSimpleTypes() {
     PrettyPrint(os, value);
     return os.str();
   };
-  results += execute_suite(make_test_suite("CPPUtils::PrettyPrint(std::ostream&, const TItem&)",
-                                           pretty_print_int,
-                                           {
-                                               make_test("should print 42 for an int", (string) "42", make_tuple(42)),
-                                           }));
+  results += ExecuteSuite(MakeTestSuite("CPPUtils::PrettyPrint(std::ostream&, const TItem&)",
+                                        pretty_print_int,
+                                        {
+                                            MakeTest("should print 42 for an int", (string) "42", make_tuple(42)),
+                                        }));
 
   auto pretty_print_float = [](float value) -> string {
     ostringstream os;
@@ -283,24 +282,24 @@ TestResults test_PrettyPrintWithSimpleTypes() {
     return os.str();
   };
   results +=
-      execute_suite(make_test_suite("CPPUtils::PrettyPrint(std::ostream&, const TItem&)",
-                                    pretty_print_float,
-                                    {
-                                        make_test("should print 3.14 for a float", (string) "3.14", make_tuple(3.14f)),
-                                    }));
+      ExecuteSuite(MakeTestSuite("CPPUtils::PrettyPrint(std::ostream&, const TItem&)",
+                                 pretty_print_float,
+                                 {
+                                     MakeTest("should print 3.14 for a float", (string) "3.14", make_tuple(3.14f)),
+                                 }));
 
   auto pretty_print_string = [](const string &value) -> string {
     ostringstream os;
     PrettyPrint(os, value);
     return os.str();
   };
-  results += execute_suite(make_test_suite("CPPUtils::PrettyPrint(std::ostream&, const TItem&)",
-                                           pretty_print_string,
-                                           {
-                                               make_test("should print \"hello world\" for a string",
-                                                         (string) "\"hello world\"",
-                                                         make_tuple((string) "hello world")),
-                                           }));
+  results += ExecuteSuite(MakeTestSuite("CPPUtils::PrettyPrint(std::ostream&, const TItem&)",
+                                        pretty_print_string,
+                                        {
+                                            MakeTest("should print \"hello world\" for a string",
+                                                     (string) "\"hello world\"",
+                                                     make_tuple((string) "hello world")),
+                                        }));
   return results;
 }
 
@@ -320,15 +319,15 @@ TestResults test_PrettyPrintWithAPair() {
     }
     return os.str();
   };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::PrettyPrint(std::ostream&, const std::pair<T1, T2>&)",
       pretty_print,
       {
-          make_test("should print (1, 2) for a pair of ints", (string) "(1, 2)", make_tuple(1)),
-          make_test("should print (3.14, 42) for a pair of float and int", (string) "(3.14, 42)", make_tuple(2)),
-          make_test("should print (\"hello\", \"world\") for a pair of strings",
-                    (string) "(\"hello\", \"world\")",
-                    make_tuple(3)),
+          MakeTest("should print (1, 2) for a pair of ints", (string) "(1, 2)", make_tuple(1)),
+          MakeTest("should print (3.14, 42) for a pair of float and int", (string) "(3.14, 42)", make_tuple(2)),
+          MakeTest("should print (\"hello\", \"world\") for a pair of strings",
+                   (string) "(\"hello\", \"world\")",
+                   make_tuple(3)),
       }));
 }
 
@@ -348,18 +347,18 @@ TestResults test_PrettyPrintWithSeparatorWithAConstCharPointer() {
     }
     return os.str();
   };
-  return execute_suite(
-      make_test_suite("CPPUtils::PrettyPrintWithSeparator(std::ostream&, const TChar*, Args&&...)",
-                      pretty_print,
-                      {
-                          make_test("should print 1, 2, 3 for a list of ints", (string) "1, 2, 3", make_tuple(", ", 1)),
-                          make_test("should print 3.14; 42; \"hello world\" for a list of float, int and string",
-                                    (string) "3.14; 42; \"hello world\"",
-                                    make_tuple("; ", 2)),
-                          make_test("should print \"hello\" \"world\" for a list of strings",
-                                    (string) "\"hello\" \"world\"",
-                                    make_tuple(" ", 3)),
-                      }));
+  return ExecuteSuite(
+      MakeTestSuite("CPPUtils::PrettyPrintWithSeparator(std::ostream&, const TChar*, Args&&...)",
+                    pretty_print,
+                    {
+                        MakeTest("should print 1, 2, 3 for a list of ints", (string) "1, 2, 3", make_tuple(", ", 1)),
+                        MakeTest("should print 3.14; 42; \"hello world\" for a list of float, int and string",
+                                 (string) "3.14; 42; \"hello world\"",
+                                 make_tuple("; ", 2)),
+                        MakeTest("should print \"hello\" \"world\" for a list of strings",
+                                 (string) "\"hello\" \"world\"",
+                                 make_tuple(" ", 3)),
+                    }));
 }
 
 TestResults test_PrettyPrintWithSeparatorWithAString() {
@@ -378,17 +377,17 @@ TestResults test_PrettyPrintWithSeparatorWithAString() {
     }
     return os.str();
   };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::PrettyPrintWithSeparator(std::ostream&, const TChar*, Args&&...)",
       pretty_print,
       {
-          make_test("should print 1 | 2 | 3 for a list of ints", (string) "1 | 2 | 3", make_tuple((string) " | ", 1)),
-          make_test("should print 3.14 / 42 / \"hello world\" for a list of float, int and string",
-                    (string) "3.14 / 42 / \"hello world\"",
-                    make_tuple((string) " / ", 2)),
-          make_test("should print \"hello\" - \"world\" for a list of strings",
-                    (string) "\"hello\" - \"world\"",
-                    make_tuple((string) " - ", 3)),
+          MakeTest("should print 1 | 2 | 3 for a list of ints", (string) "1 | 2 | 3", make_tuple((string) " | ", 1)),
+          MakeTest("should print 3.14 / 42 / \"hello world\" for a list of float, int and string",
+                   (string) "3.14 / 42 / \"hello world\"",
+                   make_tuple((string) " / ", 2)),
+          MakeTest("should print \"hello\" - \"world\" for a list of strings",
+                   (string) "\"hello\" - \"world\"",
+                   make_tuple((string) " - ", 3)),
       }));
 }
 
@@ -408,18 +407,18 @@ TestResults test_PrettyPrintWithSeparatorWithAStringView() {
     }
     return os.str();
   };
-  return execute_suite(make_test_suite(
+  return ExecuteSuite(MakeTestSuite(
       "CPPUtils::PrettyPrintWithSeparator(std::ostream&, const TChar*, Args&&...)",
       pretty_print,
       {
-          make_test(
+          MakeTest(
               "should print 1 | 2 | 3 for a list of ints", (string) "1 | 2 | 3", make_tuple((string_view) " | ", 1)),
-          make_test("should print 3.14 / 42 / \"hello world\" for a list of float, int and string",
-                    (string) "3.14 / 42 / \"hello world\"",
-                    make_tuple((string_view) " / ", 2)),
-          make_test("should print \"hello\" - \"world\" for a list of strings",
-                    (string) "\"hello\" - \"world\"",
-                    make_tuple((string_view) " - ", 3)),
+          MakeTest("should print 3.14 / 42 / \"hello world\" for a list of float, int and string",
+                   (string) "3.14 / 42 / \"hello world\"",
+                   make_tuple((string_view) " / ", 2)),
+          MakeTest("should print \"hello\" - \"world\" for a list of strings",
+                   (string) "\"hello\" - \"world\"",
+                   make_tuple((string_view) " - ", 3)),
       }));
 }
 
@@ -444,5 +443,5 @@ int main(int argc, char *argv[]) {
   results += test_PrettyPrintWithSeparatorWithAString();
   results += test_PrettyPrintWithSeparatorWithAStringView();
 
-  return results.failed() + results.errors();
+  return results.Failed() + results.Errors();
 }

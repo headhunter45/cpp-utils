@@ -7,6 +7,8 @@
 #                                                                                                                      #
 # Licensed under the MIT license. See below for details.                                                               #
 #                                                                                                                      #
+########################################################################################################################
+#                                                                                                                      #
 #  MIT License                                                                                                         #
 #                                                                                                                      #
 # Copyright (c) 2023 Tom Hicks <headhunter3@gmail.com>                                                                 #
@@ -36,6 +38,7 @@ cc_library(
     srcs = ["ansi_escapes.cpp"],
     hdrs = ["ansi_escapes.h"],
     includes = ["ansi_escapes.h"],
+    deps = [":pretty_print"],
 )
 
 cc_test(
