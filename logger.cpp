@@ -55,7 +55,7 @@ using std::string;
 shared_ptr<Logger> shared_logger_ = nullptr;
 }  // End namespace
 
-Logger::Destination::Destination() {}
+Logger::Destination::Destination() : min_type_(MessageType::Unknown), max_type_(MessageType::Wtf) {}
 
 Logger::Destination::~Destination() {}
 
