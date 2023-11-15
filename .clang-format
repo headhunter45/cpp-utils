@@ -9,5 +9,7 @@ BinPackParameters: false
 BreakBeforeBinaryOperators: NonAssignment
 ColumnLimit:     120
 DerivePointerAlignment: false
+PointerAlignment: Left
 SeparateDefinitionBlocks: Always
+SpacesBeforeTrailingComments: 2
 ...
