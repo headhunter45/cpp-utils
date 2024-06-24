@@ -35,7 +35,7 @@ package(
 
 cc_library(
     name = "ansi_escapes",
-    srcs = ["ansi_escapes.cpp"],
+    #srcs = ["ansi_escapes.cpp"],
     hdrs = ["ansi_escapes.h"],
     includes = ["ansi_escapes.h"],
     deps = [":pretty_print"],
@@ -83,7 +83,7 @@ cc_test(
 
 cc_library(
     name = "pretty_print",
-    srcs = ["pretty_print.cpp"],
+    #srcs = ["pretty_print.cpp"],
     hdrs = ["pretty_print.h"],
     includes = ["pretty_print.h"],
 )
