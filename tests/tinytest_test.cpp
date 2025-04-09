@@ -441,9 +441,9 @@ TEST(TestSuite, ShouldCoerceValuesToTheCorrectTypes) {
   EXPECT_THAT(get<0>(test_data), Eq("Test Name"));
   EXPECT_THAT(get<1>(test_data), Eq("Expected"));
   // Item 2 is checked below as inputs.
-  EXPECT_THAT(get<3>(test_data), Ne(nullopt));
-  EXPECT_THAT(get<4>(test_data), Ne(nullopt));
-  EXPECT_THAT(get<5>(test_data), Ne(nullopt));
+  EXPECT_THAT(get<3>(test_data).has_value(), Eq(false));
+  EXPECT_THAT(get<4>(test_data).has_value(), Eq(false));
+  EXPECT_THAT(get<5>(test_data).has_value(), Eq(false));
   EXPECT_THAT(get<6>(test_data), Eq(false));
 
   auto inputs = get<2>(test_data);
@@ -481,9 +481,9 @@ TEST(MakeTestSuite, ShouldMakeATestSuiteWithAVectorOfTestRuns) {
   EXPECT_THAT(get<0>(test_data), Eq("Test Name"));
   EXPECT_THAT(get<1>(test_data), Eq("Expected"));
   // Item 2 is checked below as inputs.
-  EXPECT_THAT(get<3>(test_data), Ne(nullopt));
-  EXPECT_THAT(get<4>(test_data), Ne(nullopt));
-  EXPECT_THAT(get<5>(test_data), Ne(nullopt));
+  EXPECT_THAT(get<3>(test_data).has_value(), Eq(false));
+  EXPECT_THAT(get<4>(test_data).has_value(), Eq(false));
+  EXPECT_THAT(get<5>(test_data).has_value(), Eq(false));
   EXPECT_THAT(get<6>(test_data), Eq(false));
 
   auto inputs = get<2>(test_data);
@@ -512,18 +512,18 @@ TEST(MakeTestSuite, ShouldMakeATestSuiteWithAnInitializerListOfTestRuns) {
   EXPECT_THAT(get<0>(first), Eq("Suite Two"));
   // EXPECT_THAT(get<1>(first), Eq(fnToTest));
   EXPECT_THAT(get<2>(first).size(), Eq(1));
-  EXPECT_THAT(get<3>(first), Ne(nullopt));
-  EXPECT_THAT(get<4>(first), Ne(nullopt));
-  EXPECT_THAT(get<5>(first), Ne(nullopt));
+  EXPECT_THAT(get<3>(first).has_value(), Eq(true));
+  EXPECT_THAT(get<4>(first).has_value(), Eq(true));
+  EXPECT_THAT(get<5>(first).has_value(), Eq(true));
   EXPECT_THAT(get<6>(first), Eq(true));
 
   auto test_data = *get<2>(first).begin();
   EXPECT_THAT(get<0>(test_data), Eq("Test Name"));
   EXPECT_THAT(get<1>(test_data), Eq("Expected"));
   // Item 2 is checked below as inputs.
-  EXPECT_THAT(get<3>(test_data), Ne(nullopt));
-  EXPECT_THAT(get<4>(test_data), Ne(nullopt));
-  EXPECT_THAT(get<5>(test_data), Ne(nullopt));
+  EXPECT_THAT(get<3>(test_data).has_value(), Eq(false));
+  EXPECT_THAT(get<4>(test_data).has_value(), Eq(false));
+  EXPECT_THAT(get<5>(test_data).has_value(), Eq(false));
   EXPECT_THAT(get<6>(test_data), Eq(false));
 
   auto inputs = get<2>(test_data);

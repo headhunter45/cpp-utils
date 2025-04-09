@@ -161,12 +161,21 @@ TestResults TestResults::operator+(const TestResults& other) const {
 }
 
 TestResults& TestResults::operator+=(const TestResults& other) {
-  error_messages_.insert(error_messages_.end(), other.error_messages_.begin(), other.error_messages_.end());
+  if (this != &other) {
+    error_messages_.insert(error_messages_.end(), other.error_messages_.begin(), other.error_messages_.end());
+    failure_messages_.insert(failure_messages_.end(), other.failure_messages_.begin(), other.failure_messages_.end());
+    skip_messages_.insert(skip_messages_.end(), other.skip_messages_.begin(), other.skip_messages_.end());
+  } else {
+    const auto other_error_messages = other.error_messages_;
+    error_messages_.insert(error_messages_.end(), other_error_messages.begin(), other_error_messages.end());
+    const auto other_failure_messages = other.failure_messages_;
+    failure_messages_.insert(failure_messages_.end(), other_failure_messages.begin(), other_failure_messages.end());
+    const auto other_skip_messages = other.skip_messages_;
+    skip_messages_.insert(skip_messages_.end(), other_skip_messages.begin(), other_skip_messages.end());
+  }
   errors_ += other.errors_;
   failed_ += other.failed_;
-  failure_messages_.insert(failure_messages_.end(), other.failure_messages_.begin(), other.failure_messages_.end());
   passed_ += other.passed_;
-  skip_messages_.insert(skip_messages_.end(), other.skip_messages_.begin(), other.skip_messages_.end());
   skipped_ += other.skipped_;
   total_ += other.total_;
   return *this;
@@ -211,9 +220,11 @@ MaybeTestConfigureFunction Coalesce(MaybeTestConfigureFunction first, MaybeTestC
   if (first.has_value()) {
     if (second.has_value()) {
       // This is the only place we actually need to combine them.
-      return [&first, &second]() {
-        first.value()();
-        second.value()();
+      const auto& first_value = first.value();
+      const auto& second_value = second.value();
+      return [&first_value, &second_value]() {
+        first_value();
+        second_value();
       };
     } else {
       return first;
