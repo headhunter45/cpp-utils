@@ -16,6 +16,7 @@
 - `logger`
 - `pretty_print`
 - `windows_logger`
+- `tinytest`
 
 #### Tests
 - `ansi_escapes_test`
@@ -23,6 +24,7 @@
 - `logger_test`
 - `pretty_print_test`
 - `windows_logger_test`
+- `tinytest_test`
 
 ### Dependencies
 - Note all external dependencies, including JTest, and how they are currently managed.
